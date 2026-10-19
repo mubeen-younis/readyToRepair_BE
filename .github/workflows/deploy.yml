@@ -1,0 +1,41 @@
+name: Deploy Backend (api.rtr-mhe.com)
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-backend-rtr
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Deploy to production
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Sync files to server
+        uses: burnett01/rsync-deployments@7.0.2
+        with:
+          switches: -az --delete --exclude .git --exclude .env --exclude .env.* --exclude vendor --exclude node_modules --exclude storage/logs --exclude storage/framework/cache --exclude storage/framework/sessions --exclude storage/framework/views --exclude bootstrap/cache/*.php --exclude .DS_Store
+          path: ./
+          remote_path: /var/www/rtr-mhe.com/backend/
+          remote_host: ${{ secrets.DEPLOY_HOST }}
+          remote_user: ${{ secrets.DEPLOY_USER }}
+          remote_key: ${{ secrets.DEPLOY_SSH_KEY }}
+
+      - name: Composer, migrate, and cache
+        uses: appleboy/ssh-action@v1.2.2
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          script_stop: true
+          command_timeout: 20m
+          script: |
+            bash /var/www/rtr-mhe.com/scripts/deploy-backend.sh
