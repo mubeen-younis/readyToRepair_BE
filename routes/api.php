@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\Admin\AuthController;
 use App\Http\Controllers\Api\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Api\Admin\ProductController as AdminProductController;
+use App\Http\Controllers\Api\ContactController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\ProductController;
 use Illuminate\Support\Facades\Route;
@@ -12,6 +13,9 @@ Route::get('/products/{slug}', [ProductController::class, 'show']);
 
 Route::post('/orders', [OrderController::class, 'store']);
 Route::get('/orders/{orderId}', [OrderController::class, 'show']);
+
+Route::post('/contact', [ContactController::class, 'store']);
+
 
 Route::prefix('admin')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);

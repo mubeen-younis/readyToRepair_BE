@@ -115,4 +115,16 @@ return [
         'name' => env('MAIL_FROM_NAME', env('APP_NAME', 'Laravel')),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Contact Form Inbox
+    |--------------------------------------------------------------------------
+    |
+    | Website contact form submissions are delivered to this address.
+    |
+    */
+
+    'contact_to' => env('MAIL_CONTACT_TO', env('MAIL_FROM_ADDRESS', 'marketing@rtr-mhe.com')),
+
 ];
+
